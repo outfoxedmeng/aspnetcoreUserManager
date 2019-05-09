@@ -1,0 +1,36 @@
+﻿@model IEnumerable<UserIndexViewModel>
+@{
+    ViewBag.Title = "User Manager";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Operate</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var user in Model)
+        {
+            <tr>
+                <th scope="row">@user.Id</th>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    <form asp-action="Delete" asp-controller="User" asp-route-id="@user.Id" method="post">
+                        <input type="submit" class="btn btn-ms btn-danger" value="Delete" />
+                    </form>
+                </td>
+            </tr>
+        }
+
+
+    </tbody>
+</table>
+<div>
+    <a asp-action="CreateUser" class="btn btn-info"> create</a>
+</div>
