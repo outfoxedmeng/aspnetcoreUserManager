@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Heavy.Web.Data;
+using Heavy.Web.Models;
 using Heavy.Web.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace Heavy.Web.Controllers
 {
     public class UserController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserController(UserManager<IdentityUser> userManager)
+        public UserController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
@@ -56,6 +57,34 @@ namespace Heavy.Web.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public async Task<IActionResult> CreateUser(CreateUserViewModel newUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(newUser);
+            }
 
+            var res = await _userManager.CreateAsync(new ApplicationUser
+            {
+                BirthDate = newUser.BirthDate,
+                Country = newUser.Country,
+                Email = newUser.Email,
+                UserName = newUser.UserName
+            }, newUser.Password);
+
+            if (res.Succeeded)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                foreach (var error in res.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            return View(newUser);
+        }
     }
 }
